@@ -23,7 +23,7 @@ class App extends Component {
   }
 
   getUserName() {
-    let apiBaseUrl = 'http://localhost:8000/api/';
+    let apiBaseUrl = 'http://0.0.0.0:8000/api/';
     let self = this;
     let jwtToken = sessionstorage.getItem('jwtToken');
     console.log('JWT: ' + jwtToken);
@@ -68,7 +68,7 @@ class App extends Component {
 
   onSubmit = event => {
     event.preventDefault();
-    let apiBaseUrl = 'http://localhost:8000/api/';
+    let apiBaseUrl = 'http://0.0.0.0:8000/api/';
     let self = this;
     let payload = {};
     let axiosConfig = {

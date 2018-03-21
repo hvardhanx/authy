@@ -39,7 +39,7 @@ export default class Login extends Component {
 
   onSubmit = event => {
     event.preventDefault();
-    let apiBaseUrl = 'http://localhost:8000/api/';
+    let apiBaseUrl = 'http://0.0.0.0:8000/api/';
     let self = this;
     let jwtToken = self.generateToken();
     let payload = {

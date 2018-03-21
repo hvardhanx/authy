@@ -30,7 +30,7 @@ export default class Register extends Component {
 
   onSubmit = event => {
     event.preventDefault();
-    let apiBaseUrl = 'http://localhost:8000/api/';
+    let apiBaseUrl = 'http://0.0.0.0:8000/api/';
     let self = this;
     let payload = {
       "username": self.state.username,
@@ -69,10 +69,14 @@ export default class Register extends Component {
     const errors = this.props.errors || {};
     const redirect = this.state.redirect;
     if (redirect) {
-      return <Redirect to={{
-        pathname: "/",
-        state: { username: this.state.username }
-      }}/>;
+      return (
+        <Redirect
+          to={{
+            pathname: '/',
+            state: { username: this.state.username }
+          }}
+        />
+      );
     }
     return (
       <Jumbotron className="container">
