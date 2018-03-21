@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
     this.state = {
       isLoggedIn: false,
-      secret: '&00&xl=%!b(%)n080i2qt5epr(qise)70^9cd626%4e&$6nl^g',
+      secret: process.env.REACT_APP_SECRET_KEY,
       first_name: ''
     };
   }

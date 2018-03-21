@@ -21,6 +21,7 @@ from django.contrib.auth.models import User
 from rest_framework import generics, serializers, permissions
 from rest_framework.response import Response
 from rest_framework import status
+from decouple import config
 import jwt
 
 # Serializers
@@ -48,7 +49,7 @@ class UserView(generics.ListAPIView):
             auth_jwt = request.META['HTTP_AUTHORIZATION'].replace('Bearer ', '')
             print(auth_jwt)
             try:
-                x = jwt.decode(auth_jwt, '&00&xl=%!b(%)n080i2qt5epr(qise)70^9cd626%4e&$6nl^g', algorithms=['HS256'])
+                x = jwt.decode(auth_jwt, config('SECRET_KEY'), algorithms=['HS256'])
                 print(x)
             except Exception as e:
                 print(e)
