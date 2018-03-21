@@ -69,6 +69,7 @@ class RegisterView(generics.ListCreateAPIView):
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', generic.RedirectView.as_view(url='/api/', permanent=False)),
     url(r'^api/$', get_schema_view(), name='api'),
     url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/user/(?P<username>\w+)/$', UserView.as_view()),
