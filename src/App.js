@@ -16,7 +16,10 @@ class App extends Component {
   // self.props.location.state.username
 
   componentDidMount() {
-    this.getUserName();
+    const isLoggedIn = sessionstorage.getItem('jwtToken') ? true : false;
+    if (isLoggedIn) {
+      this.getUserName();
+    }
   }
 
   getUserName() {
@@ -113,11 +116,14 @@ class App extends Component {
         <a href="/login">Login</a> | <a href="/register">Register</a>
       </div>
     );
+    const heading = isLoggedIn ? (
+      <h1 className="App-title">Hello? - Bonsoir, {getUser}.</h1>
+    ) : (
+      <h1 className="App-title">Please login.</h1>
+    );
     return (
       <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Hello? - Bonsoir, {getUser}.</h1>
-        </header>
+        <header className="App-header">{heading}</header>
         <Form onSubmit={this.onSubmit}>{button}</Form>
       </div>
     );
