@@ -30,7 +30,7 @@ export default class Register extends Component {
 
   onSubmit = event => {
     event.preventDefault();
-    let apiBaseUrl = 'http://0.0.0.0:8000/api/';
+    let apiBaseUrl = process.env.REACT_APP_API;
     let self = this;
     let payload = {
       "username": self.state.username,

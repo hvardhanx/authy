@@ -10,11 +10,12 @@ export default class Login extends Component {
   state = {
     username: '',
     password: '',
-    secret: '&00&xl=%!b(%)n080i2qt5epr(qise)70^9cd626%4e&$6nl^g',
+    secret: process.env.REACT_APP_SECRET_KEY,
     redirect: false
   };
 
   generateToken() {
+    console.log(`Generating....${this.state.secret}`);
     let jwtToken = jwt.sign(
       { username: this.state.username },
       this.state.secret,
@@ -39,7 +40,7 @@ export default class Login extends Component {
 
   onSubmit = event => {
     event.preventDefault();
-    let apiBaseUrl = 'http://0.0.0.0:8000/api/';
+    let apiBaseUrl = process.env.REACT_APP_API;
     let self = this;
     let jwtToken = self.generateToken();
     let payload = {
