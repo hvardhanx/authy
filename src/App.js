@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
-import { Alert, Button, Jumbotron, Form } from 'reactstrap';
+import { Button, Form } from 'reactstrap';
 import sessionstorage from 'sessionstorage';
 // this.getUserName();
 class App extends Component {
@@ -27,7 +27,6 @@ class App extends Component {
     let self = this;
     let jwtToken = sessionstorage.getItem('jwtToken');
     console.log('JWT: ' + jwtToken);
-    let payload = {};
     let axiosConfig = {
       headers: {
         'Content-Type': 'application/json',
