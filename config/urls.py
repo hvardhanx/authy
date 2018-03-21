@@ -49,15 +49,13 @@ class UserView(generics.ListAPIView):
             auth_jwt = request.META['HTTP_AUTHORIZATION'].replace('Bearer ', '')
             print(auth_jwt)
             try:
-                x = jwt.decode(auth_jwt, config('SECRET_KEY'), algorithms=['HS256'])
-                print(x)
+                decoded = jwt.decode(auth_jwt, config('SECRET_KEY'), algorithms=['HS256'])
             except Exception as e:
-                print(e)
+                print("E: {}".format(e))
                 return Response(status=status.HTTP_403_FORBIDDEN)
             return super().get(request, *args, **kwargs)
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
-        return super().get(request, *args, **kwargs)
 
 
 class RegisterView(generics.ListCreateAPIView):

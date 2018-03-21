@@ -10,12 +10,11 @@ export default class Login extends Component {
   state = {
     username: '',
     password: '',
-    secret: process.env.REACT_APP_SECRET_KEY,
+    secret: '&00&xl=%!b(%)n080i2qt5epr(qise)70^9cd626%4e&$6nl^g',
     redirect: false
   };
 
   generateToken() {
-    console.log(`Generating....${this.state.secret}`);
     let jwtToken = jwt.sign(
       { username: this.state.username },
       this.state.secret,
