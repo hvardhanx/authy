@@ -13,7 +13,6 @@ class App extends Component {
       first_name: ''
     };
   }
-  // self.props.location.state.username
 
   componentDidMount() {
     const isLoggedIn = sessionstorage.getItem('jwtToken') ? true : false;
@@ -26,16 +25,6 @@ class App extends Component {
     let apiBaseUrl = process.env.REACT_APP_API;
     let self = this;
     let jwtToken = sessionstorage.getItem('jwtToken');
-    console.log('JWT: ' + jwtToken);
-    let axiosConfig = {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        Authorization: 'Bearer ' + jwtToken
-      }
-    };
-
-    console.log(axiosConfig);
 
     axios({
       method: 'get',
@@ -46,23 +35,15 @@ class App extends Component {
         Authorization: 'Bearer ' + jwtToken
       }
     })
-      // .get(apiBaseUrl + 'user/' + self.props.location.state.username + '/', payload, axiosConfig)
       .then(function(res) {
-        console.log(res);
         if (res.status === 200) {
-          console.log(res.data[0].first_name);
           self.setState({ first_name: res.data[0].first_name });
-        } else if (res.status === 204) {
-          console.log('Username password do not match');
-          alert('username password do not match');
-        } else {
-          console.log('Username does not exists');
-          alert('Username__ does not exist');
         }
       })
       .catch(function(err) {
-        console.log('Token expired');
-        alert('Token expired please logout and then login again :/');
+        alert('Token error! Login again. :/');
+        sessionstorage.removeItem('jwtToken');
+        self.setState({ isLoggedIn: false });
       });
   }
 
@@ -81,21 +62,13 @@ class App extends Component {
     axios
       .get(apiBaseUrl + 'auth/logout/', payload, axiosConfig)
       .then(function(res) {
-        console.log(res);
         if (res.status === 200) {
           sessionstorage.removeItem('jwtToken');
           self.setState({ isLoggedIn: false });
-        } else if (res.status === 204) {
-          console.log('Username password do not match');
-          alert('username password do not match');
-        } else {
-          console.log('Username does not exists');
-          alert('Username__ does not exist');
         }
       })
       .catch(function(err) {
-        console.log('Username____wow does not exists');
-        alert('Username does not exist');
+        alert('Server error. Please try again! :/');
       });
   };
 
@@ -116,9 +89,9 @@ class App extends Component {
       </div>
     );
     const heading = isLoggedIn ? (
-      <h1 className="App-title">Hello? - Bonsoir, {getUser}.</h1>
+      <h1 className="App-title">Hello, {getUser}.</h1>
     ) : (
-      <h1 className="App-title">Please login.</h1>
+      <h1 className="App-title">Please login/register.</h1>
     );
     return (
       <div className="App">

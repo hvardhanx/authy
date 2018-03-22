@@ -49,19 +49,13 @@ export default class Register extends Component {
     axios
       .post(apiBaseUrl + 'users/register/', payload, axiosConfig)
       .then(function(res) {
-        console.log(res);
         if (res.status === 201) {
           self.setState({ redirect: true });
           alert('Registration successful!');
-          console.log('Register Success');
-        } else {
-          console.log('User not created');
-          alert('Username not created');
         }
       })
       .catch(function(err) {
-        console.log('Fields already exist');
-        alert('Fields already exist');
+        alert('User not created. :/');
       });
   };
 

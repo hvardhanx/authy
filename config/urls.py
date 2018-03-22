@@ -16,19 +16,48 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views import generic
+from rest_framework.views import APIView
 from rest_framework.schemas import get_schema_view
 from django.contrib.auth.models import User
 from rest_framework import generics, serializers, permissions
 from rest_framework.response import Response
-from rest_framework import status
+from django.contrib.auth import authenticate, get_user_model
+from rest_framework import status, authentication, exceptions
 from decouple import config
+from rest_framework.permissions import IsAuthenticated
+import json
 import jwt
+
+class UserAuthentication(authentication.BaseAuthentication):
+    def authenticate(self, request):
+        # Get the username and password
+        username = request.data.get('username', None)
+        password = request.data.get('password', None)
+
+        if not username or not password:
+            raise exceptions.AuthenticationFailed(('No credentials provided.'))
+
+        credentials = {
+            get_user_model().USERNAME_FIELD: username,
+            'password': password
+        }
+
+        user = authenticate(**credentials)
+
+        if user is None:
+            raise exceptions.AuthenticationFailed(('Invalid username/password.'))
+
+        if not user.is_active:
+            raise exceptions.AuthenticationFailed(('User inactive or deleted.'))
+        return (user, None)  # authentication successful
+
 
 # Serializers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password')
+
 
 # Views
 class UserView(generics.ListAPIView):
@@ -44,10 +73,8 @@ class UserView(generics.ListAPIView):
     
     def get(self, request, *args, **kwargs):
         authorization = request.META.get('HTTP_AUTHORIZATION', '')
-        print("Auth: {}".format(authorization))
         if authorization:
             auth_jwt = request.META['HTTP_AUTHORIZATION'].replace('Bearer ', '')
-            print(auth_jwt)
             try:
                 decoded = jwt.decode(auth_jwt, config('SECRET_KEY'), algorithms=['HS256'])
             except Exception as e:
@@ -65,11 +92,22 @@ class RegisterView(generics.ListCreateAPIView):
     ]
     serializer_class = UserSerializer
 
+class LoginView(APIView):
+    authentication_classes = (UserAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, format=None):
+        content = {
+            'user': request.user.username,
+            'auth': request.auth,  # None
+        }
+        return Response(content)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', generic.RedirectView.as_view(url='/api/', permanent=False)),
     url(r'^api/$', get_schema_view(), name='api'),
+    url(r'^api/users/login/$', LoginView.as_view()),
     url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/user/(?P<username>\w+)/$', UserView.as_view()),
     url(r'^api/users/register/$', RegisterView.as_view())

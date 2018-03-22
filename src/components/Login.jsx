@@ -54,23 +54,20 @@ export default class Login extends Component {
     };
 
     axios
-      .post(apiBaseUrl + 'auth/login/', payload, axiosConfig)
+      .post(apiBaseUrl + 'users/login/', payload, axiosConfig)
       .then(function(res) {
         console.log(res);
         if (res.status === 200) {
           sessionstorage.setItem('jwtToken', jwtToken);
           self.setState({ redirect: true });
-        } else if (res.status === 204) {
-          console.log('Username password do not match');
-          alert('username password do not match');
-        } else {
-          console.log('Username does not exists');
-          alert('Username__ does not exist');
         }
       })
-      .catch(function(err) {
-        console.log('Username____wow does not exists');
-        alert('Username does not exist');
+      .catch(function(err, res) {
+        console.log(err.response);
+        console.log(res);
+        if (err.response.status === 403) {
+          alert('Invalid username/password.');
+        }
       });
   };
 
