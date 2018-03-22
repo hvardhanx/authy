@@ -55,15 +55,13 @@ export default class Login extends Component {
     axios
       .post(apiBaseUrl + 'users/login/', payload, axiosConfig)
       .then(function(res) {
-        console.log(res);
         if (res.status === 200) {
           sessionstorage.setItem('jwtToken', jwtToken);
+          sessionstorage.setItem('username', self.state.username);
           self.setState({ redirect: true });
         }
       })
       .catch(function(err, res) {
-        console.log(err.response);
-        console.log(res);
         if (err.response.status === 403) {
           alert('Invalid username/password.');
         }

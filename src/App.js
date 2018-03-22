@@ -3,7 +3,7 @@ import './App.css';
 import axios from 'axios';
 import { Button, Form } from 'reactstrap';
 import sessionstorage from 'sessionstorage';
-// this.getUserName();
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -25,10 +25,10 @@ class App extends Component {
     let apiBaseUrl = process.env.REACT_APP_API;
     let self = this;
     let jwtToken = sessionstorage.getItem('jwtToken');
-
+    let username = sessionstorage.getItem('username');
     axios({
       method: 'post',
-      url: apiBaseUrl + 'user/' + self.props.location.state.username + '/',
+      url: apiBaseUrl + 'user/' + username + '/',
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -43,6 +43,7 @@ class App extends Component {
       .catch(function(err) {
         alert('Token error! Login again. :/');
         sessionstorage.removeItem('jwtToken');
+        sessionstorage.removeItem('username');
         self.setState({ isLoggedIn: false });
       });
   }
@@ -64,6 +65,7 @@ class App extends Component {
       .then(function(res) {
         if (res.status === 200) {
           sessionstorage.removeItem('jwtToken');
+          sessionstorage.removeItem('username');
           self.setState({ isLoggedIn: false });
         }
       })
