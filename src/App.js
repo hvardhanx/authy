@@ -27,7 +27,7 @@ class App extends Component {
     let jwtToken = sessionstorage.getItem('jwtToken');
 
     axios({
-      method: 'get',
+      method: 'post',
       url: apiBaseUrl + 'user/' + self.props.location.state.username + '/',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ class App extends Component {
     })
       .then(function(res) {
         if (res.status === 200) {
-          self.setState({ first_name: res.data[0].first_name });
+          self.setState({ first_name: res.data.first_name });
         }
       })
       .catch(function(err) {

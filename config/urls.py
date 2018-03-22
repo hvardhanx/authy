@@ -52,6 +52,16 @@ class UserAuthentication(authentication.BaseAuthentication):
         return (user, None)  # authentication successful
 
 
+# Permissions
+class AllowOnlyPOSTRequests(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        # allow all POST requests
+        if request.method == 'POST':
+            return True
+        else:
+            return False
+
 # Serializers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,27 +77,27 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 # Views
-class UserView(generics.ListAPIView):
+class UserView(APIView):
     queryset = User.objects.all()
     model = User
-    serializer_class = UserSerializer
-    permission_classes = [
-        permissions.AllowAny
-    ]
+    permission_classes = (
+        AllowOnlyPOSTRequests,
+    )
     def get_queryset(self):
         qs = super(UserView, self).get_queryset()
         return qs.filter(username=self.kwargs['username'])
     
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         authorization = request.META.get('HTTP_AUTHORIZATION', '')
         if authorization:
             auth_jwt = request.META['HTTP_AUTHORIZATION'].replace('Bearer ', '')
             try:
-                decoded = jwt.decode(auth_jwt, config('SECRET_KEY'), algorithms=['HS256'])
+                decoded = jwt.decode(auth_jwt, config('SECRET_KEY'), algorithms=[config('JWT_ALGORITHMS')])
             except Exception as e:
                 print("E: {}".format(e))
-                return Response(status=status.HTTP_403_FORBIDDEN)
-            return super().get(request, *args, **kwargs)
+                return Response({'err': e, 'status': status.HTTP_403_FORBIDDEN})
+            user = User.objects.get(username=decoded['username'])
+            return Response({ 'first_name': user.first_name })
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
@@ -114,8 +124,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', generic.RedirectView.as_view(url='/api/', permanent=False)),
     url(r'^api/$', get_schema_view(), name='api'),
-    url(r'^api/users/login/$', LoginView.as_view()),
+    url(r'^api/users/login/$', LoginView.as_view(), name='login'),
     url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/user/(?P<username>\w+)/$', UserView.as_view()),
-    url(r'^api/users/register/$', RegisterView.as_view())
+    url(r'^api/user(?:/(?P<username>\w+))*/$', UserView.as_view(), name='get_user'),
+    url(r'^api/users/register/$', RegisterView.as_view(), name='register')
 ]
