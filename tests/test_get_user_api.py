@@ -43,3 +43,33 @@ class UserLoginViewTestCase(APITestCase):
         response = self.client.post(self.url, content_type='application/json')
 
         self.assertEqual(response.status_code, 403)
+
+    def test_post_invalid_token_failing_jwt_auth(self):
+        """
+        Ensure POSTing over JWT auth with invalid token fails
+        """
+        auth = 'Bearer abc123'
+        response = self.client.post(
+            self.url,
+            content_type='application/json',
+            HTTP_AUTHORIZATION=auth
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_post_expired_token_failing_jwt_auth(self):
+        """
+        Ensure POSTing over JWT auth with expired token fails
+        """
+        payload = self.data
+        payload['exp'] = 1
+        token = jwt.encode(payload, config('SECRET_KEY'), algorithm=str(config('JWT_ALGORITHMS'))).decode('utf-8')
+
+        auth = 'Bearer {0}'.format(token)
+        response = self.client.post(
+            self.url,
+            content_type='application/json',
+            HTTP_AUTHORIZATION=auth
+        )
+
+        self.assertEqual(response.status_code, 403)

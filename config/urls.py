@@ -94,8 +94,7 @@ class UserView(APIView):
             try:
                 decoded = jwt.decode(auth_jwt, config('SECRET_KEY'), algorithms=[config('JWT_ALGORITHMS')])
             except Exception as e:
-                print("E: {}".format(e))
-                return Response({'err': e, 'status': status.HTTP_403_FORBIDDEN})
+                return Response(status=status.HTTP_403_FORBIDDEN)
             user = User.objects.get(username=decoded['username'])
             return Response({ 'first_name': user.first_name })
         else:
