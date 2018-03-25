@@ -22,7 +22,7 @@
 ### Don't forget to configure your .env file:
  - SECRET_KEY
  - REACT_APP_SECRET_KEY
- - REACT_APP_API
+ - REACT_APP_API (Backend API URL)
  - DEBUG
  - DATABASE_URL
  - ALLOWED_HOSTS
