@@ -1,6 +1,6 @@
 # authy
 
-## Running the backend:
+### Running the backend:
 
 ### Create your virtualenv and clone the repo:
 
@@ -12,9 +12,18 @@
 - python manage.py runserver
 ```
 
-Running the frontend:
+### Running the frontend:
 
 ```bash
 - npm install
 - npm start
 ```
+
+### Don't forget to configure your .env file:
+ - SECRET_KEY
+ - REACT_APP_SECRET_KEY
+ - REACT_APP_API
+ - DEBUG
+ - DATABASE_URL
+ - ALLOWED_HOSTS
+ - JWT_ALGORITHMS
